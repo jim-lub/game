@@ -10,6 +10,30 @@ class Player {
       horizontal: 0,
       vertical: 0
     };
+    this.KEY = {
+      w: {
+        active: false,
+        timestamp: null
+      },
+      a: {
+        active: false,
+        timestamp: null
+      },
+      s: {
+        active: false,
+        timestamp: null,
+        trigger: null
+      },
+      d: {
+        active: false,
+        timestamp: null
+      },
+      space: {
+        active: false,
+        timestamp: null
+      },
+    };
+    this.BLOCK = false;
     this.ACTION = {
       idle: true,
       run: false,
@@ -30,18 +54,90 @@ class Player {
       },
       speed: {
         run: {
-          left: -1,
-          right: 1
+          left: -2,
+          right: 2
         },
         jump: {
           up: -1,
-          down: 1
+          down: 2
         }
       }
     };
   }
 
+  touchFloor() {
+    return (this.POS.y <= 300) ? false : true;
+  }
+
+  setActionsToFalse() {
+    this.ACTION.idle = false;
+    this.ACTION.run = false;
+    this.ACTION.jump = false;
+    this.ACTION.fall = false;
+    this.ACTION.slide = false;
+    this.ACTION.shoot = false;
+    this.ACTION.melee = false;
+    this.ACTION.dead = false;
+  }
+
+  animationEnded() {
+    if (this.EXT.Animation.currentFrame.animationEnd && this.touchFloor()) {
+      this.setActionsToFalse();
+      this.ACTION.idle = true;
+      this.EXT.Animation.currentFrame.animationEnd = false;
+    }
+  }
+
+  move() {
+
+    if (this.KEY.d.active) {
+      this.MOVE.horizontal = this.DEFAULTS.speed.run.right;
+      if (this.KEY.s.active) {
+        this.setActionsToFalse();
+        this.ACTION.slide = true;
+      } else if (!this.ACTION.run && this.touchFloor()) {
+        this.setActionsToFalse();
+        this.ACTION.run = true;
+      }
+    } else if (this.KEY.a.active) {
+      this.MOVE.horizontal = this.DEFAULTS.speed.run.left;
+      if (!this.ACTION.run && this.touchFloor()) {
+        this.setActionsToFalse();
+        this.ACTION.run = true;
+      }
+    } else {
+      if (this.touchFloor()) {
+        this.MOVE.horizontal = 0;
+        this.setActionsToFalse();
+        this.ACTION.idle = true;
+      }
+    }
+
+    if (this.KEY.space.active) {
+      this.setActionsToFalse();
+      this.ACTION.jump = true;
+      this.POS.y -= 5;
+    }
+
+    this.POS.x += this.MOVE.horizontal;
+    this.POS.y += this.MOVE.vertical;
+  }
+
+  /**********
+  ****  render() function will be called every frame refresh.
+  ****  This function will contain all functions that need to be called on
+  ****  every refresh
+  **********/
   render() {
+    this.move();
+    this.animationEnded();
+
+    if (!this.touchFloor()) {
+      this.MOVE.vertical = this.DEFAULTS.speed.jump.down;
+    } else {
+      this.MOVE.vertical = 0;
+    }
+
     /**********
     ****  Checking the current player action that is set to TRUE and
     ****  make a call to the external Animations class to request the

@@ -1,45 +1,27 @@
 /* jshint esversion: 6 */
 let Controls = (function () {
 
-  let toggle = () => {
+  let eventListeners = (_p_) => {
     $('body').keydown(function(event) {
-      if(Game.DEFAULTS.keys.w == event.which) {
-        setToFalse();
-        Game.PLAYER._1_.ACTION.idle = true;
-      }
-      if(Game.DEFAULTS.keys.s == event.which) {
-        setToFalse();
-        Game.PLAYER._1_.ACTION.run = true;
-      }
-      if(Game.DEFAULTS.keys.d == event.which) {
-        setToFalse();
-        Game.PLAYER._1_.ACTION.jump = true;
-      }
-      if(Game.DEFAULTS.keys.a == event.which) {
-        setToFalse();
-        Game.PLAYER._1_.ACTION.dead = true;
-      }
-      if(Game.DEFAULTS.keys.space == event.which) {
-        setToFalse();
-        Game.PLAYER._1_.ACTION.melee = true;
-      }
+      if (Game.DEFAULTS.keys.w == event.which) { _p_.KEY.w.active = true; }
+      if (Game.DEFAULTS.keys.a == event.which) { _p_.KEY.a.active = true; }
+      if (Game.DEFAULTS.keys.s == event.which) { _p_.KEY.s.active = true; }
+      if (Game.DEFAULTS.keys.d == event.which) { _p_.KEY.d.active = true; }
+      if (Game.DEFAULTS.keys.space == event.which) { _p_.KEY.space.active = true; }
     });
-  };
 
-  let setToFalse = () => {
-    Game.PLAYER._1_.ACTION.idle = false;
-    Game.PLAYER._1_.ACTION.run = false;
-    Game.PLAYER._1_.ACTION.jump = false;
-    Game.PLAYER._1_.ACTION.fall = false;
-    Game.PLAYER._1_.ACTION.slide = false;
-    Game.PLAYER._1_.ACTION.shoot = false;
-    Game.PLAYER._1_.ACTION.melee = false;
-    Game.PLAYER._1_.ACTION.dead = false;
+    $('body').keyup(function(event) {
+      if (Game.DEFAULTS.keys.w == event.which) { _p_.KEY.w.active = false; }
+      if (Game.DEFAULTS.keys.a == event.which) { _p_.KEY.a.active = false; }
+      if (Game.DEFAULTS.keys.s == event.which) { _p_.KEY.s.active = false; }
+      if (Game.DEFAULTS.keys.d == event.which) { _p_.KEY.d.active = false; }
+      if (Game.DEFAULTS.keys.space == event.which) { _p_.KEY.space.active = false; }
+    });
   };
 
   return {
     init: function () {
-      toggle();
+      eventListeners(Game.PLAYER._1_);
     }
   };
 

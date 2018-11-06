@@ -50,9 +50,9 @@ class Animations_player_frames {
   jump() {
     const obj = {
       settings: {
-        ticksPerFrame: 5,
-        ticksTotal: 49,
-        loop: true
+        ticksPerFrame: 8,
+        ticksTotal: 79,
+        loop: false
       },
       frames: [
         { name: "JUMP1", image: "Jump (1).png" },

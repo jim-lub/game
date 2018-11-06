@@ -2,7 +2,8 @@
 class Animations_player {
   constructor() {
     this.currentFrame = {
-      img: null
+      img: null,
+      animationEnd: false
     };
     this.VAL = {
       tickCount: 0,
@@ -93,6 +94,11 @@ class Animations_player {
     if (this.VAL.tickCount > obj.settings.ticksTotal && obj.settings.loop === true) {
       this.VAL.tickCount = 0;
       this.VAL.curFrame = null;
+      this.currentFrame.animationEnd = false;
+    }
+    if (this.VAL.tickCount > obj.settings.ticksTotal && obj.settings.loop === false) {
+      this.VAL.tickCount = obj.settings.ticksTotal - 1;
+      this.currentFrame.animationEnd = true;
     }
 
   }
