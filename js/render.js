@@ -8,6 +8,7 @@ const Render = () => {
   $('#dev--data').text(`Frames: ${Game.RENDER.val.currentFrame}`);
 
   Game.PLAYER._1_.render();
+  Game.RENDER.ctx.fillRect(0, 555, 800, 30);
 
   window.requestAnimationFrame(Render);
 };

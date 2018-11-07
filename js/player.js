@@ -13,27 +13,31 @@ class Player {
     this.KEY = {
       w: {
         active: false,
-        timestamp: null
+        timestamp_keyDown: null,
+        timestamp_keyUp: null
       },
       a: {
         active: false,
-        timestamp: null
+        timestamp_keyDown: null,
+        timestamp_keyUp: null
       },
       s: {
         active: false,
-        timestamp: null,
+        timestamp_keyDown: null,
+        timestamp_keyUp: null,
         trigger: null
       },
       d: {
         active: false,
-        timestamp: null
+        timestamp_keyDown: null,
+        timestamp_keyUp: null
       },
       space: {
         active: false,
-        timestamp: null
+        timestamp_keyDown: null,
+        timestamp_keyUp: null
       },
     };
-    this.BLOCK = false;
     this.ACTION = {
       idle: true,
       run: false,
@@ -59,7 +63,22 @@ class Player {
         },
         jump: {
           up: -1,
-          down: 2
+          down: 2,
+          left: 1,
+          right: 1
+        },
+        slide: {
+          left: -2.5,
+          right: 2.5,
+        }
+      },
+      slide: {
+        timestamp: null,
+        timelock: 1500,
+        time: 700,
+        speed: {
+          left: -2.5,
+          right: 2.5
         }
       }
     };
@@ -88,30 +107,76 @@ class Player {
     }
   }
 
-  move() {
+  slideAllowed() {
+    if (this.DEFAULTS.slide.timestamp === null) {
+      this.DEFAULTS.slide.timestamp = Date.now() + this.DEFAULTS.slide.timelock;
+      console.log(1);
 
-    if (this.KEY.d.active) {
-      this.MOVE.horizontal = this.DEFAULTS.speed.run.right;
-      if (this.KEY.s.active) {
-        this.setActionsToFalse();
-        this.ACTION.slide = true;
-      } else if (!this.ACTION.run && this.touchFloor()) {
-        this.setActionsToFalse();
-        this.ACTION.run = true;
-      }
-    } else if (this.KEY.a.active) {
-      this.MOVE.horizontal = this.DEFAULTS.speed.run.left;
-      if (!this.ACTION.run && this.touchFloor()) {
-        this.setActionsToFalse();
-        this.ACTION.run = true;
-      }
+      return true;
+    } else if (Date.now() > this.DEFAULTS.slide.timestamp) {
+      this.DEFAULTS.slide.timestamp = Date.now() + this.DEFAULTS.slide.timelock;
+      console.log(2);
+
+      return true;
     } else {
-      if (this.touchFloor()) {
-        this.MOVE.horizontal = 0;
-        this.setActionsToFalse();
-        this.ACTION.idle = true;
+      console.log(3);
+      if (Date.now() > (this.DEFAULTS.slide.timestamp - (this.DEFAULTS.slide.timelock - this.DEFAULTS.slide.time))) {
+        return false;
+      } else {
+        return true;
       }
     }
+  }
+
+  move() {
+
+    // RUN -- a / d -- check if key is pressed
+    if (this.KEY.a.active && this.touchFloor() || this.KEY.d.active && this.touchFloor()) {
+
+      // check if sliding
+      if (this.KEY.s.active && this.slideAllowed()) {
+        // console.log(this.slideAllowed());
+
+        if (this.KEY.a.timestamp_keyDown > this.KEY.d.timestamp_keyDown && this.KEY.a.active) {
+          this.MOVE.horizontal = this.DEFAULTS.speed.slide.left;
+          this.setActionsToFalse();
+          this.ACTION.slide = true;
+        }
+        if (this.KEY.d.timestamp_keyDown > this.KEY.a.timestamp_keyDown && this.KEY.d.active) {
+          this.MOVE.horizontal = this.DEFAULTS.speed.slide.right;
+          this.setActionsToFalse();
+          this.ACTION.slide = true;
+        }
+
+      // if not sliding then run
+      } else {
+
+        // RUN -- a / d -- check if a is pressed later than the d key
+        if (this.KEY.a.timestamp_keyDown > this.KEY.d.timestamp_keyDown && this.KEY.a.active) {
+          // set horizontal movement and animation action
+          this.MOVE.horizontal = this.DEFAULTS.speed.run.left;
+          this.setActionsToFalse();
+          this.ACTION.run = true;
+        }
+
+        // RUN -- a / d -- check if d is pressed later than the a key
+        if (this.KEY.d.timestamp_keyDown > this.KEY.a.timestamp_keyDown && this.KEY.d.active) {
+          // set horizontal movement and animation action
+          this.MOVE.horizontal = this.DEFAULTS.speed.run.right;
+          this.setActionsToFalse();
+          this.ACTION.run = true;
+        }
+
+      }
+
+    } else {
+
+      this.MOVE.horizontal = 0;
+      this.setActionsToFalse();
+      this.ACTION.idle = true;
+
+    }
+
 
     if (this.KEY.space.active) {
       this.setActionsToFalse();
