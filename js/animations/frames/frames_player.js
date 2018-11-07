@@ -91,8 +91,8 @@ class Animations_player_frames {
   shoot() {
     const obj = {
       settings: {
-        ticksPerFrame: 7,
-        ticksTotal: 20,
+        ticksPerFrame: 8,
+        ticksTotal: 23,
         loop: true
       },
       frames: [

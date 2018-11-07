@@ -83,11 +83,13 @@ class Player {
         }
       },
       jump: {
-        height: 120,
+        height: 10,
+        increment: 0,
         speed: {
-          fall: 2.5,
-          left: -1,
-          right: -1
+          fall: 0.6, // increases jump.increment on each tick
+          run: 0.7, // increases horizontal speed if jumping while already running
+          left: -1.5,
+          right: 1.5
         }
       },
       slide: {
@@ -103,7 +105,15 @@ class Player {
   }
 
   touchFloor() {
-    return (this.POS.y <= 300) ? false : true;
+    if (this.POS.y <= 300) {
+      this.DEFAULTS.jump.increment += this.DEFAULTS.jump.speed.fall;
+
+      return false;
+    } else {
+      this.DEFAULTS.jump.increment = 0;
+
+      return true;
+    }
   }
 
   setActionsToFalse() {
@@ -186,9 +196,8 @@ class Player {
 
     } else {
 
-      if (this.ACTION.jump) {
-
-      } else {
+      // if touching floor and not moving left and right execute this code block
+      if (this.touchFloor()) {
 
         if (this.KEY.leftMouse.active) {
           this.MOVE.horizontal = 0;
@@ -207,10 +216,42 @@ class Player {
 
     }
 
+    // Initiate jump
     if (this.KEY.space.active && this.touchFloor()) {
       this.setActionsToFalse();
       this.ACTION.jump = true;
-      this.POS.y -= this.DEFAULTS.jump.height;
+      this.MOVE.vertical = -this.DEFAULTS.jump.height;
+      if (this.MOVE.horizontal > 0) {
+          this.MOVE.horizontal += this.DEFAULTS.jump.speed.run;
+      }
+
+      if (this.MOVE.horizontal < 0) {
+          this.MOVE.horizontal += this.DEFAULTS.jump.speed.run;
+      }
+    }
+
+    // Air movement
+    if (!this.touchFloor()) {
+      if (this.MOVE.horizontal > 0) {
+        if (this.KEY.a.active) {
+          this.MOVE.horizontal = this.DEFAULTS.jump.speed.left;
+        }
+      }
+
+      if (this.MOVE.horizontal < 0) {
+        if (this.KEY.d.active) {
+          this.MOVE.horizontal = this.DEFAULTS.jump.speed.right;
+        }
+      }
+
+      if (this.MOVE.horizontal == 0) {
+        if (this.KEY.a.active) {
+          this.MOVE.horizontal = this.DEFAULTS.jump.speed.left;
+        }
+        if (this.KEY.d.active) {
+          this.MOVE.horizontal = this.DEFAULTS.jump.speed.right;
+        }
+      }
     }
 
     this.POS.x += this.MOVE.horizontal;
@@ -223,14 +264,14 @@ class Player {
   ****  every refresh
   **********/
   render() {
-    this.move();
-    this.animationEnded();
-
     if (!this.touchFloor()) {
-      this.MOVE.vertical = this.DEFAULTS.jump.speed.fall;
+      this.MOVE.vertical += this.DEFAULTS.jump.speed.fall * this.DEFAULTS.jump.speed.fall;
     } else {
       this.MOVE.vertical = 0;
     }
+
+    this.move();
+    this.animationEnded();
 
     /**********
     ****  Checking the current player action that is set to TRUE and

@@ -15,6 +15,7 @@ const Render = () => {
 
 const Init = () => {
   Controls.init();
+  Game.RENDER.ctx.imageSmoothingEnabled = true;
   window.requestAnimationFrame(Render);
 };
 
