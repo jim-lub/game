@@ -37,6 +37,16 @@ class Player {
         timestamp_keyDown: null,
         timestamp_keyUp: null
       },
+      leftMouse: {
+        active: false,
+        timestamp_keyDown: null,
+        timestamp_keyUp: null
+      },
+      rightMouse: {
+        active: false,
+        timestamp_keyDown: null,
+        timestamp_keyUp: null
+      }
     };
     this.ACTION = {
       idle: true,
@@ -58,8 +68,8 @@ class Player {
       },
       speed: {
         run: {
-          left: -2,
-          right: 2
+          left: -6,
+          right: 3
         },
         jump: {
           up: -1,
@@ -69,12 +79,20 @@ class Player {
         },
         slide: {
           left: -2.5,
-          right: 2.5,
+          right: 4,
+        }
+      },
+      jump: {
+        height: 120,
+        speed: {
+          fall: 2.5,
+          left: -1,
+          right: -1
         }
       },
       slide: {
         timestamp: null,
-        timelock: 1500,
+        timelock: 1400,
         time: 700,
         speed: {
           left: -2.5,
@@ -110,16 +128,13 @@ class Player {
   slideAllowed() {
     if (this.DEFAULTS.slide.timestamp === null) {
       this.DEFAULTS.slide.timestamp = Date.now() + this.DEFAULTS.slide.timelock;
-      console.log(1);
 
       return true;
     } else if (Date.now() > this.DEFAULTS.slide.timestamp) {
       this.DEFAULTS.slide.timestamp = Date.now() + this.DEFAULTS.slide.timelock;
-      console.log(2);
 
       return true;
     } else {
-      console.log(3);
       if (Date.now() > (this.DEFAULTS.slide.timestamp - (this.DEFAULTS.slide.timelock - this.DEFAULTS.slide.time))) {
         return false;
       } else {
@@ -171,17 +186,31 @@ class Player {
 
     } else {
 
-      this.MOVE.horizontal = 0;
-      this.setActionsToFalse();
-      this.ACTION.idle = true;
+      if (this.ACTION.jump) {
+
+      } else {
+
+        if (this.KEY.leftMouse.active) {
+          this.MOVE.horizontal = 0;
+          this.setActionsToFalse();
+          this.ACTION.shoot = true;
+        } else if (this.KEY.rightMouse.active) {
+          this.MOVE.horizontal = 0;
+          this.setActionsToFalse();
+          this.ACTION.melee = true;
+        } else {
+          this.MOVE.horizontal = 0;
+          this.setActionsToFalse();
+          this.ACTION.idle = true;
+        }
+      }
 
     }
 
-
-    if (this.KEY.space.active) {
+    if (this.KEY.space.active && this.touchFloor()) {
       this.setActionsToFalse();
       this.ACTION.jump = true;
-      this.POS.y -= 5;
+      this.POS.y -= this.DEFAULTS.jump.height;
     }
 
     this.POS.x += this.MOVE.horizontal;
@@ -198,7 +227,7 @@ class Player {
     this.animationEnded();
 
     if (!this.touchFloor()) {
-      this.MOVE.vertical = this.DEFAULTS.speed.jump.down;
+      this.MOVE.vertical = this.DEFAULTS.jump.speed.fall;
     } else {
       this.MOVE.vertical = 0;
     }
@@ -221,6 +250,29 @@ class Player {
     ****  calling the context and drawing the image with the specified
     ****  positional and size values defined in DEFAULTS
     **********/
-    Game.RENDER.ctx.drawImage(this.EXT.Animation.currentFrame.img, this.POS.x, this.POS.y, 641 / 2, 542 / 2);
+    Game.RENDER.ctx.drawImage(this.EXT.Animation.currentFrame.img, this.POS.x, this.POS.y, this.EXT.Animation.currentFrame.img.width / 2, this.EXT.Animation.currentFrame.img.height / 2);
+
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//

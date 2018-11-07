@@ -18,7 +18,9 @@ class configureGame {
         a: 65,
         s: 83,
         d: 68,
-        space: 32
+        space: 32,
+        leftMouse: 1,
+        rightMouse: 3
       }
     };
   }
