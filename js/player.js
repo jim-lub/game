@@ -3,21 +3,8 @@ class Player {
   constructor({name}) {
     this.name = name;
 
-    this.ACTIONS = {
-      idle: new Idle(),
-      run: new Run(),
-      jump: new Jump(),
-      slide: new Slide()
-    };
-
-    this.POS = {
-      _: {x: 0, y: 300},
-      motion: {horizontal: 0, vertical: 0},
-      direction: 'R' // or 'L' --> Direction player is facing
-    };
-
     this.CONST = {
-      actions: undefined,
+      actions: ['idle', 'run', 'jump', 'slide'],
       _: {
         size: {
           width: 0,
@@ -38,27 +25,21 @@ class Player {
       }
     };
 
-    this.createPlayerActionsArray();
-
-    this.ANIMATIONS = new PlayerAnimations(this.CONST.actions);
     this.CTRLS = new PlayerControls();
+    this.ACTIONS = new PlayerActions(this.CONST.actions);
+    this.ANIMATIONS = new PlayerAnimations(this.CONST.actions);
     // this.COLLISION = new CollisionDetection();
 
-  }
+    this.POS = {
+      _: {x: 0, y: 300},
+      motion: {horizontal: 0, vertical: 0},
+      direction: 'R' // or 'L' --> Direction player is facing
+    };
 
-  // Loop over all actions defined in this.ACTIONS and create an array
-  createPlayerActionsArray() {
-    let newPlayersActionsArray = [];
-    Object.keys(this.ACTIONS).forEach((cur) => newPlayersActionsArray.push(cur) );
-    this.CONST.actions = newPlayersActionsArray;
-  }
-
-  setActiveActionsToFalse() {
-    this.CONST.actions.forEach(cur => this.ACTIONS[cur].active = false );
   }
 
   /*****************************************************
-  * All logic for moving the player are in this function.
+  * MOVEMENT LOGIC
   *
   *
   *****************************************************/
@@ -67,8 +48,7 @@ class Player {
     let ACTIONS = this.ACTIONS;
 
     if (CTRLS.isActive('a') || CTRLS.isActive('d')) {
-      this.setActiveActionsToFalse();
-      ACTIONS.run.setToActive();
+      ACTIONS.setToActive('run');
 
       // Check which if A or D was pressed last
       if (CTRLS.lastKeyPressed('a', 'd')) {
@@ -80,8 +60,7 @@ class Player {
       }
 
     } else {
-      this.setActiveActionsToFalse();
-      ACTIONS.idle.setToActive();
+      ACTIONS.setToActive('idle');
       this.POS.motion.horizontal = 0;
     }
 
@@ -90,8 +69,8 @@ class Player {
   }
 
   /*****************************************************
-  * All logic for rendering the player on the screen are
-  * in this function.
+  * RENDER PLAYER
+  *
   *
   *****************************************************/
   render() {
@@ -102,6 +81,8 @@ class Player {
 
     if (ACTIONS.idle.active) ANIMATIONS.play({action: 'idle'});
     if (ACTIONS.run.active) ANIMATIONS.play({action: 'run'});
+    if (ACTIONS.jump.active) ANIMATIONS.play({action: 'jump'});
+    if (ACTIONS.slide.active) ANIMATIONS.play({action: 'slide'});
 
     let currentFrame = this.ANIMATIONS.FRAME;
   	this.test({logControls: false});

@@ -1,35 +1,26 @@
 /* jshint esversion: 6 */
-class Actions {
-    constructor() {
-      this.active = false;
-      this.timestamp = null;
+class PlayerActions {
+    constructor(playerActions) {
+      this.playerActions = playerActions;
+
+      this.idle = {
+        active: false
+      };
+      this.run = {
+        active: false
+      };
+      this.jump = {
+        active: false
+      };
+      this.slide = {
+        active: false
+      };
     }
 
-    setToActive() {
-      this.active = true;
+    setToActive(arg) {
+      // set active to false for each action
+      this.playerActions.forEach(action => this[action].active = false);
+      // set active to true for action argument
+      this[arg].active = true;
     }
-}
-
-class Idle extends Actions {
-  constructor() {
-    super();
-  }
-}
-
-class Run extends Actions {
-  constructor() {
-    super();
-  }
-}
-
-class Jump extends Actions {
-  constructor() {
-    super();
-  }
-}
-
-class Slide extends Actions {
-  constructor() {
-    super();
-  }
 }
