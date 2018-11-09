@@ -15,14 +15,14 @@ class PlayerAnimations {
 
     this.CONFIG = new PlayerAnimations_config();
 
-    this.LOAD = {}; // Result of preloadAnimations will be stored within this object
+    this.LOAD = {}; // Result of preloadAnimations will be stored in this object
 
     this.preloadAnimations(this.playerActions, this.CONFIG);
   }
 
   loadImage({file, folder}) {
     let image = new Image();
-    image.src = `./sprites/${folder}/${file}`;
+    image.src = `./sprites${folder}/${file}`;
     return image;
   }
 
@@ -72,19 +72,18 @@ class PlayerAnimations {
 
       // Checks if the sequence is between the current tickCount && is not already active
       if (ticks >= cur.start && ticks <= cur.end && currentFrame != cur.name) {
-        console.log(currentFrame, ticks, cur.image);
         this.FRAME.image = cur.image;
         this.VAR.currentFrame = cur.name;
       }
 
-      // If the sequence needs to be on a loop
+      // If the sequence ends && loop == TRUE
       if (ticks > defaults.ticksToEndSequence && defaults.loop === true) {
         this.VAR.tickCount = 0;
         this.VAR.currentFrame = null;
         this.FRAME.endOfSequence = false;
       }
 
-      // If the sequence needs to be on a loop
+      // if the sequence ends && loop == FALSE
       if (ticks > defaults.ticksToEndSequence && defaults.loop === false) {
         this.VAR.tickCount = defaults.ticksToEndSequence - 1;
         this.FRAME.endOfSequence = true;

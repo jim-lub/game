@@ -19,7 +19,7 @@ class Player {
     };
 
     this.CONST = {
-      actions: ['idle', 'run', 'jump', 'slide'],
+      actions: ['idle', 'run', 'jump', 'slide'], // NEW Action: Create new config and add to this array
       _: {
         size: {
           width: 0,
@@ -40,22 +40,23 @@ class Player {
       }
     };
 
-    this.ACTIONS = {
-      // idle: new Action('idle'), // this.ACTIONS.idle.active.. etc..
-      // run: new Action('run'),
-      // jump: new Action('jump'),
-      // slide: new Action('slide')
-    };
+    this.ACTIONS = {}; // Result of loadPlayerActions will be stored in this object
 
     this._ = {
       Ctrls: new PlayerControls(),
       Animations: new PlayerAnimations(this.CONST.actions),
       // Collision: new CollisionDetection()
     };
+
+    this.loadPlayerActions();
+  }
+
+  loadPlayerActions() {
+
   }
 
   render() {
-      this._.Animations.play({action: 'jump'});
+      this._.Animations.play({action: 'run'});
       let currentFrame = this._.Animations.FRAME;
     	this.test({logControls: true});
 
@@ -72,7 +73,7 @@ class Player {
 
     // Test if controls are registering
     if (logControls) {
-      if (this._.Ctrls.KEY.w.active) console.log(this._.Animations.LOAD.idle); // console.log('W');
+      if (this._.Ctrls.KEY.w.active) console.log('W');
       if (this._.Ctrls.KEY.a.active) console.log('A');
       if (this._.Ctrls.KEY.s.active) console.log('S');
       if (this._.Ctrls.KEY.d.active) console.log('D');
