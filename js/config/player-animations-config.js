@@ -20,7 +20,7 @@ class PlayerAnimations_config {
 
   /***********************************************************************
   * To create a new animation sequence add a new function within this
-  * class and add the name to the array in Player.CONST.actions.
+  * class that has the same name as the corresponding action
   *
   * The interpreter will loop over all frames and space them apart evenly
   * by the value defined in 'ticksPerFrame'. If you want to customize the

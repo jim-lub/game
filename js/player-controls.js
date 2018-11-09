@@ -28,7 +28,7 @@ class PlayerControls {
         active: false,
         enabled: true,
         timestamp: {keyDown: null, keyUp: null}
-      },
+      }
     };
 
     this.MOUSE = {
@@ -124,5 +124,20 @@ class PlayerControls {
         }
       });
     });
+  }
+
+  // return true if key is active
+  isActive(a) {
+    let b = (this.MOUSE._name[0] === a) ? 'MOUSE'
+          : (this.MOUSE._name[1] === a) ? 'MOUSE'
+          : (this.MOUSE._name[2] === a) ? 'MOUSE'
+          : 'KEY';
+
+    if (this[b][a].active) return true;
+  }
+
+  // returns true if key a is pressed after key b
+  lastKeyPressed(a, b) {
+    if (this.KEY[a].timestamp.keyDown > this.KEY[b].timestamp.keyDown) return true;
   }
 }
