@@ -4,7 +4,7 @@ class Player {
     this.name = name;
 
     this.POS = {
-      _: {x: 0, y: 0},
+      _: {x: 0, y: 300},
       motion: {horizontal: 0, vertical: 0},
       direction: 'R' // or 'L' --> Direction player is facing
     };
@@ -55,7 +55,11 @@ class Player {
   }
 
   render() {
+      this._.Animations.play({action: 'jump'});
+      let currentFrame = this._.Animations.FRAME;
     	this.test({logControls: true});
+
+      Game.RENDER.ctx.drawImage(currentFrame.image, this.POS._.x, this.POS._.y, currentFrame.image.width / 2, currentFrame.image.height / 2);
   }
 
 
@@ -68,7 +72,7 @@ class Player {
 
     // Test if controls are registering
     if (logControls) {
-      if (this._.Ctrls.KEY.w.active) console.log('W');
+      if (this._.Ctrls.KEY.w.active) console.log(this._.Animations.LOAD.idle); // console.log('W');
       if (this._.Ctrls.KEY.a.active) console.log('A');
       if (this._.Ctrls.KEY.s.active) console.log('S');
       if (this._.Ctrls.KEY.d.active) console.log('D');

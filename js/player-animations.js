@@ -1,9 +1,11 @@
 /* jshint esversion: 6 */
 class PlayerAnimations {
   constructor(playerActions) {
+    this.playerActions = playerActions;
+
     this.FRAME = {
       image: null,
-      endOfLoop: false
+      endOfSequence: false
     };
 
     this.VAR = {
@@ -13,14 +15,9 @@ class PlayerAnimations {
 
     this.CONFIG = new PlayerAnimations_config();
 
-    this.LOAD = {
-      // idle: this.load({idle: true}),
-      // run: this.load({run: true}),
-      // jump: this.load({jump: true}),
-      // slide: this.load({slide: true})
-    };
+    this.LOAD = {}; // Result of preloadAnimations will be stored within this object
 
-    this.preloadAnimations(playerActions, this.CONFIG);
+    this.preloadAnimations(this.playerActions, this.CONFIG);
   }
 
   loadImage({file, folder}) {
@@ -35,8 +32,6 @@ class PlayerAnimations {
       let frameSequence = [];
       let config = CONFIG[action]();
       let frameStart, frameEnd;
-
-      console.log(config);
 
       config.frames.forEach((cur, index) => {
         let frameStart, frameEnd;
@@ -57,11 +52,43 @@ class PlayerAnimations {
         });
       });
 
-      console.log(frameSequence);
+      this.LOAD[action] = {
+        defaults: config.defaults,
+        sequence: frameSequence
+      };
+
     });
   }
 
-  startAnimation({action}) {
+  play({action}) {
+    this.VAR.tickCount++;
 
+    let defaults = this.LOAD[action].defaults;
+    let sequence = this.LOAD[action].sequence;
+    let ticks = this.VAR.tickCount;
+    let currentFrame = this.VAR.currentFrame;
+
+    sequence.forEach((cur) => {
+
+      // Checks if the sequence is between the current tickCount && is not already active
+      if (ticks >= cur.start && ticks <= cur.end && currentFrame != cur.name) {
+        console.log(currentFrame, ticks, cur.image);
+        this.FRAME.image = cur.image;
+        this.VAR.currentFrame = cur.name;
+      }
+
+      // If the sequence needs to be on a loop
+      if (ticks > defaults.ticksToEndSequence && defaults.loop === true) {
+        this.VAR.tickCount = 0;
+        this.VAR.currentFrame = null;
+        this.FRAME.endOfSequence = false;
+      }
+
+      // If the sequence needs to be on a loop
+      if (ticks > defaults.ticksToEndSequence && defaults.loop === false) {
+        this.VAR.tickCount = defaults.ticksToEndSequence - 1;
+        this.FRAME.endOfSequence = true;
+      }
+    });
   }
 }

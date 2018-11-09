@@ -6,7 +6,7 @@ class PlayerAnimations_config {
   //   return {
   //     defaults: {
   //       ticksPerFrame: 0,
-  //       ticksUntilLoop: 0,
+  //       ticksToEndSequence: 0,
   //       loop: true
   //     },
   //     overrideDefaults: false,
@@ -20,7 +20,7 @@ class PlayerAnimations_config {
     return {
       defaults: {
         ticksPerFrame: 10,
-        ticksUntilLoop: 99,
+        ticksToEndSequence: 99,
         loop: true
       },
       overrideDefaults: false,
@@ -43,7 +43,7 @@ class PlayerAnimations_config {
     return {
       defaults: {
         ticksPerFrame: 8,
-        ticksUntilLoop: 63,
+        ticksToEndSequence: 63,
         loop: true
       },
       overrideDefaults: false,
@@ -64,7 +64,7 @@ class PlayerAnimations_config {
     return {
       defaults: {
         ticksPerFrame: 8,
-        ticksUntilLoop: 79,
+        ticksToEndSequence: 79,
         loop: false
       },
       overrideDefaults: false,
@@ -87,7 +87,7 @@ class PlayerAnimations_config {
     return {
       defaults: {
         ticksPerFrame: 5,
-        ticksUntilLoop: 24,
+        ticksToEndSequence: 24,
         loop: false
       },
       overrideDefaults: false,
