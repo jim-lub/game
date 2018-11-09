@@ -49,7 +49,7 @@ class Player {
 
     this._ = {
       Ctrls: new PlayerControls(),
-      // Animations: new PlayerAnimations(),
+      Animations: new PlayerAnimations(this.CONST.actions),
       // Collision: new CollisionDetection()
     };
   }

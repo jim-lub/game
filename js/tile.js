@@ -2,7 +2,7 @@
 class Tile {
   constructor({x, y, width, height}) {
     this._ = {
-
+      move: 0
     };
     this.POS = {
       _: {x: x, y: y}
@@ -13,6 +13,6 @@ class Tile {
   }
 
   render() {
-    Game.RENDER.ctx.fillRect(this.POS._.x, this.POS._.y, this.SIZE._.w, this.SIZE._.h);
+    Game.RENDER.ctx.fillRect(this.POS._.x + this._.move, this.POS._.y, this.SIZE._.w, this.SIZE._.h);
   }
 }

@@ -37,7 +37,10 @@ const Render = () => {
 
   Game.PLAYER._1.render();
 
+  // Game.TILES._1[0]._.move += 5;
+
   Game.TILES._1.forEach((tile) => {
+    // tile._.move += 5;
     tile.render();
   });
 

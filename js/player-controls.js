@@ -6,27 +6,27 @@ class PlayerControls {
       _code: [87, 65, 83, 68, 32], // array with key CODES
       w: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {keyDown: null, keyUp: null}
       },
       a: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {keyDown: null, keyUp: null}
       },
       s: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {keyDown: null, keyUp: null}
       },
       d: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {keyDown: null, keyUp: null}
       },
       space: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {keyDown: null, keyUp: null}
       },
     };
@@ -36,17 +36,17 @@ class PlayerControls {
       _code: [1, 2, 3], // arrray with mouse CODES
       leftClick: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {mouseDown: null, mouseUp: null}
       },
       middleClick: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {mouseDown: null, mouseUp: null}
       },
       rightClick: {
         active: false,
-        disabled: false,
+        enabled: true,
         timestamp: {mouseDown: null, mouseUp: null}
       }
     };
@@ -61,9 +61,9 @@ class PlayerControls {
   eventListener_keyDown(KEY) {
     $('body').keydown(function(event) {
 
-      KEY._name.forEach((key, index) => { // loop over all keys specified in this.KEY._name array
+      KEY._name.forEach((key, index) => {
 
-        if (KEY._code[index] == event.which) { // check which key is triggered
+        if (KEY._code[index] == event.which && KEY[key].enabled === true) {
           KEY[key].active = true;
           if (!KEY[key].timestamp.keyDown) KEY[key].timestamp.keyDown = Date.now();
         }
@@ -74,9 +74,9 @@ class PlayerControls {
   eventListener_keyUp(KEY) {
     $('body').keyup(function(event) {
 
-      KEY._name.forEach((key, index) => { // loop over all keys specified in this.KEY._name array
+      KEY._name.forEach((key, index) => {
 
-        if (KEY._code[index] == event.which) { // check which key is triggered
+        if (KEY._code[index] == event.which) {
           KEY[key].active = false;
           KEY[key].timestamp.keyDown = null;
           KEY[key].timestamp.keyUp = Date.now();
@@ -90,7 +90,7 @@ class PlayerControls {
 
       MOUSE._name.forEach((mouse, index) => {
 
-        if (MOUSE._code[index] == event.which) {
+        if (MOUSE._code[index] == event.which && MOUSE[mouse].enabled === true) {
           MOUSE[mouse].active = true;
           if (!MOUSE[mouse].timestamp.mouseDown) MOUSE[mouse].timestamp.mouseDown = Date.now();
         }
@@ -126,22 +126,3 @@ class PlayerControls {
     });
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//
