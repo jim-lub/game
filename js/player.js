@@ -4,7 +4,7 @@ class Player {
     this.name = name;
 
     this.CONST = {
-      actions: ['idle', 'run', 'jump', 'slide'],
+      actions: ['idle', 'run', 'jump', 'slide'], 
       _: {
         size: {
           width: 0,
@@ -31,11 +31,10 @@ class Player {
     // this.COLLISION = new CollisionDetection();
 
     this.POS = {
-      _: {x: 0, y: 300},
+      c: {x: 0, y: 300},
       motion: {horizontal: 0, vertical: 0},
       direction: 'R' // or 'L' --> Direction player is facing
     };
-
   }
 
   /*****************************************************
@@ -43,29 +42,39 @@ class Player {
   *
   *
   *****************************************************/
-  move() {
-    let CTRLS = this.CTRLS;
-    let ACTIONS = this.ACTIONS;
+  move({CTRLS, ACTIONS, POS, CONST}) {
 
     if (CTRLS.isActive('a') || CTRLS.isActive('d')) {
       ACTIONS.setToActive('run');
 
       // Check which if A or D was pressed last
       if (CTRLS.lastKeyPressed('a', 'd')) {
-        this.POS.motion.horizontal = this.CONST._.run.velocity.left;
+        POS.motion.horizontal = CONST._.run.velocity.left;
       }
 
       if (CTRLS.lastKeyPressed('d', 'a')) {
-        this.POS.motion.horizontal = this.CONST._.run.velocity.right;
+        POS.motion.horizontal = CONST._.run.velocity.right;
       }
 
     } else {
       ACTIONS.setToActive('idle');
-      this.POS.motion.horizontal = 0;
+      POS.motion.horizontal = 0;
     }
 
-    this.POS._.x += this.POS.motion.horizontal;
-    this.POS._.y += this.POS.motion.vertical;
+    POS.c.x += POS.motion.horizontal;
+    POS.c.y += POS.motion.vertical;
+  }
+
+  /*****************************************************
+  * RENDER PLAYER
+  *
+  *
+  *****************************************************/
+  animate({ACTIONS, ANIMATIONS}) {
+    if (ACTIONS.idle.active) ANIMATIONS.play({action: 'idle'});
+    if (ACTIONS.run.active) ANIMATIONS.play({action: 'run'});
+    if (ACTIONS.jump.active) ANIMATIONS.play({action: 'jump'});
+    if (ACTIONS.slide.active) ANIMATIONS.play({action: 'slide'});
   }
 
   /*****************************************************
@@ -74,19 +83,21 @@ class Player {
   *
   *****************************************************/
   render() {
-    let ACTIONS = this.ACTIONS;
-    let ANIMATIONS = this.ANIMATIONS;
+    this.move({
+      CTRLS: this.CTRLS,
+      ACTIONS: this.ACTIONS,
+      POS: this.POS,
+      CONST: this.CONST
+    });
 
-    this.move();
-
-    if (ACTIONS.idle.active) ANIMATIONS.play({action: 'idle'});
-    if (ACTIONS.run.active) ANIMATIONS.play({action: 'run'});
-    if (ACTIONS.jump.active) ANIMATIONS.play({action: 'jump'});
-    if (ACTIONS.slide.active) ANIMATIONS.play({action: 'slide'});
+    this.animate({
+      ACTIONS: this.ACTIONS,
+      ANIMATIONS: this.ANIMATIONS
+    });
 
     let currentFrame = this.ANIMATIONS.FRAME;
   	this.test({logControls: false});
-    Game.RENDER.ctx.drawImage(currentFrame.image, this.POS._.x, this.POS._.y, currentFrame.image.width / 2, currentFrame.image.height / 2);
+    Game.RENDER.ctx.drawImage(currentFrame.image, this.POS.c.x, this.POS.c.y, currentFrame.image.width / 2, currentFrame.image.height / 2);
   }
 
 
