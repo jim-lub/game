@@ -5,14 +5,15 @@ class Tile {
       move: 0
     };
     this.POS = {
-      _: {x: x, y: y}
+      c: {x: x, y: y}
     };
     this.SIZE = {
-      _: {w: width, h: height}
+      width: width,
+      height: height
     };
   }
 
   render() {
-    Game.RENDER.ctx.fillRect(this.POS._.x + this._.move, this.POS._.y, this.SIZE._.w, this.SIZE._.h);
+    Game.RENDER.ctx.fillRect(this.POS.c.x, this.POS.c.y, this.SIZE.width, this.SIZE.height);
   }
 }

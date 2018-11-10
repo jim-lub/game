@@ -14,9 +14,10 @@ class Config {
 
     this.TILES = {
       _1: [
-        new Tile({x: 100, y: 100, width: 30, height: 30, type: 'block', collision: true}),
-        new Tile({x: 200, y: 200, width: 30, height: 30, type: 'block', collision: true}),
-        new Tile({x: 300, y: 300, width: 30, height: 30, type: 'block', collision: true})
+        new Tile({x: 600, y: 100, width: 30, height: 600, type: 'block', collision: true}),
+        new Tile({x: 0, y: 555, width: 1200, height: 30, type: 'block', collision: true}),
+        new Tile({x: 0, y: 0, width: 10, height: 600, type: 'block', collision: true}),
+        new Tile({x: 200, y: 100, width: 30, height: 30, type: 'block', collision: true})
       ]
     };
   }
@@ -44,13 +45,12 @@ const Render = () => {
     tile.render();
   });
 
-  Game.RENDER.ctx.fillRect(0, 555, 1200, 30);
-
   window.requestAnimationFrame(Render);
 };
 
 const Init = () => {
-  Game.RENDER.ctx.imageSmoothingEnabled = true;
+  Game.PLAYER._1.COLLISION.init(Game.TILES._1);
+  Game.PLAYER._1.init();
   window.requestAnimationFrame(Render);
 };
 

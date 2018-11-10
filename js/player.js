@@ -4,19 +4,19 @@ class Player {
     this.name = name;
 
     this.CONST = {
-      actions: ['idle', 'run', 'jump', 'slide'], 
+      actions: ['idle', 'run', 'jump', 'slide'],
       _: {
         size: {
-          width: 0,
-          height: 0
+          width: 320, // 641
+          height: 271 // 542
         },
         idle: {},
         run: {
-          velocity: {left: -4, right: 4}
+          velocity: {left: -10, right: 10}
         },
         jump: {
-          velocity: {left: -1.5, right: 1.5, run: 0.7},
-          altitude: 12
+          velocity: {left: -1.5, right: 1.5, run: 0.7, fall: 3},
+          altitude: 12,
         },
         slide: {
           velocity: {left: -2.5, right: -2.5},
@@ -25,24 +25,22 @@ class Player {
       }
     };
 
-    this.CTRLS = new PlayerControls();
-    this.ACTIONS = new PlayerActions(this.CONST.actions);
-    this.ANIMATIONS = new PlayerAnimations(this.CONST.actions);
-    // this.COLLISION = new CollisionDetection();
-
     this.POS = {
-      c: {x: 0, y: 300},
+      c: {x: 50, y: 250},
       motion: {horizontal: 0, vertical: 0},
       direction: 'R' // or 'L' --> Direction player is facing
     };
+
+    this.CTRLS = new PlayerControls();
+    this.ACTIONS = new PlayerActions(this.CONST.actions);
+    this.ANIMATIONS = new PlayerAnimations(this.CONST.actions);
+    this.COLLISION = new CollisionDetection();
   }
 
   /*****************************************************
-  * MOVEMENT LOGIC
-  *
-  *
+  * MOVE
   *****************************************************/
-  move({CTRLS, ACTIONS, POS, CONST}) {
+  move({CTRLS, ACTIONS, COLLISION, POS, CONST}) {
 
     if (CTRLS.isActive('a') || CTRLS.isActive('d')) {
       ACTIONS.setToActive('run');
@@ -61,14 +59,22 @@ class Player {
       POS.motion.horizontal = 0;
     }
 
-    POS.c.x += POS.motion.horizontal;
-    POS.c.y += POS.motion.vertical;
+    // POS.motion.vertical = (!this.collision('x')) ? CONST._.jump.velocity.fall : 0;
+
+    if (!COLLISION.x) POS.c.x += POS.motion.horizontal;
+    if (!COLLISION.y) POS.c.y += POS.motion.vertical;
+
   }
 
   /*****************************************************
-  * RENDER PLAYER
-  *
-  *
+  * collision
+  *****************************************************/
+  collision({COLLISION, POS, HITBOX}) {
+    COLLISION.listen({POS: this.POS, HITBOX: this.CONST._});
+  }
+
+  /*****************************************************
+  * ANIMATE
   *****************************************************/
   animate({ACTIONS, ANIMATIONS}) {
     if (ACTIONS.idle.active) ANIMATIONS.play({action: 'idle'});
@@ -78,16 +84,21 @@ class Player {
   }
 
   /*****************************************************
-  * RENDER PLAYER
-  *
-  *
+  * RENDER
   *****************************************************/
   render() {
+    this.collision({
+      COLLISION: this.COLLISION,
+      POS: this.POS,
+      HITBOX: this.CONST._
+    });
+
     this.move({
       CTRLS: this.CTRLS,
       ACTIONS: this.ACTIONS,
       POS: this.POS,
-      CONST: this.CONST
+      CONST: this.CONST,
+      COLLISION: this.COLLISION
     });
 
     this.animate({
@@ -96,17 +107,26 @@ class Player {
     });
 
     let currentFrame = this.ANIMATIONS.FRAME;
-  	this.test({logControls: false});
-    Game.RENDER.ctx.drawImage(currentFrame.image, this.POS.c.x, this.POS.c.y, currentFrame.image.width / 2, currentFrame.image.height / 2);
-  }
+  	this.test({logCollision: true});
 
+    Game.RENDER.ctx.globalAlpha = 0.2;
+    Game.RENDER.ctx.fillRect(this.POS.c.x, this.POS.c.y, this.CONST._.size.width, this.CONST._.size.height);
+    Game.RENDER.ctx.globalAlpha = 1;
+
+    Game.RENDER.ctx.drawImage(currentFrame.image, this.POS.c.x, this.POS.c.y, this.CONST._.size.width, this.CONST._.size.height);
+  }
 
   /************************
   * Tests for development only.
   * Call this.test() with an object as argument
   * set key to true to enable test
   ************************/
-  test({logControls}) {
+  test({logControls, logCollision}) {
+
+    // Log CollisionDetection
+    if (logCollision) {
+      console.log(this.COLLISION.x, this.COLLISION.y);
+    }
 
     // Test if controls are registering
     if (logControls) {
