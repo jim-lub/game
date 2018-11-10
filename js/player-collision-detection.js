@@ -3,10 +3,21 @@ class CollisionDetection {
   constructor() {
     this.x = false;
     this.y = false;
+    this.status = {
+      isTouchingFloor: false
+    };
   }
 
   init(tiles) {
-    this.TILES = tiles;
+    this.STATIC_TILES = tiles;
+  }
+
+  hit(axis) {
+    return (this[axis] === true) ? true : false;
+  }
+
+  isFloor() {
+    return (this.y === true && this.status.isTouchingFloor === true) ? true : false;
   }
 
   pointCollision({HITBOX, TILE}, offsetX, offsetY) {
@@ -20,12 +31,38 @@ class CollisionDetection {
   }
 
   boxCollision({HITBOX, TILE}) {
-    let topLeft = this.pointCollision({HITBOX, TILE}, 0, 0);
-    let topRight = this.pointCollision({HITBOX, TILE}, HITBOX.width, 0);
-    let bottomLeft = this.pointCollision({HITBOX, TILE}, 0, HITBOX.height);
-    let bottomRight = this.pointCollision({HITBOX, TILE}, HITBOX.width, HITBOX.height);
+    let w = HITBOX.width;
+    let h = HITBOX.height;
+    let pointsPerEdge = 14; // set how much hitpoints there should be on each edge
+    let collision = false;
 
-    if (topLeft || topRight || bottomLeft || bottomRight) {
+    // offset values for corners
+    const offset = [
+      {x: 0, y: 0},
+      {x: 0, y: h},
+      {x: w, y: 0},
+      {x: w, y: h}
+    ];
+
+    // offset values for points on the edges
+    for(let j = 0; j < pointsPerEdge; j ++) {
+      let value = j / (pointsPerEdge + 1);
+      offset.push(
+        {x: h * value, y: 0},
+        {x: 0, y: h * value},
+        {x: w * value, y: 0},
+        {x: w, y: h * value}
+      );
+    }
+
+    for (let i = 0; i < offset.length; i++) {
+      if(this.pointCollision({HITBOX, TILE}, offset[i].x, offset[i].y)) {
+        collision = true;
+        break;
+      }
+    }
+
+    if (collision) {
       return true;
     }
     return false;
@@ -34,9 +71,9 @@ class CollisionDetection {
   loop({POS, HITBOX}, axis) {
     let offsetX = (axis == 'x') ? POS.motion.horizontal : 0;
     let offsetY = (axis == 'y') ? POS.motion.vertical : 0;
-    let detection = [];
+    let collision = [];
 
-    this.TILES.forEach(tile => {
+    this.STATIC_TILES.forEach(tile => {
       if (
         this.boxCollision({
           HITBOX: {
@@ -53,16 +90,26 @@ class CollisionDetection {
           }
         })
       ) {
-        detection.push(true);
+        collision.push(true);
       }
     });
 
-    return (detection.length > 0) ? true : false;
+    return (collision.length > 0) ? true : false;
   }
 
   listen({POS, HITBOX}) {
-    this.x = (this.loop({POS, HITBOX}, 'x')) ? true : false;
-    this.y = (this.loop({POS, HITBOX}, 'y')) ? true : false;
+    if ((this.loop({POS, HITBOX}, 'x'))) {
+      this.x = true;
+    } else {
+      this.x = false;
+    }
+
+    if ((this.loop({POS, HITBOX}, 'y'))) {
+      this.y = true;
+      this.status.isTouchingFloor = true;
+    } else {
+      this.y = false;
+    }
   }
 
 }

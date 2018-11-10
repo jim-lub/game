@@ -15,7 +15,7 @@ class Player {
           velocity: {left: -10, right: 10}
         },
         jump: {
-          velocity: {left: -1.5, right: 1.5, run: 0.7, fall: 3},
+          velocity: {left: -1.5, right: 1.5, run: 0.7, fall: 0.3},
           altitude: 12,
         },
         slide: {
@@ -26,7 +26,7 @@ class Player {
     };
 
     this.POS = {
-      c: {x: 50, y: 250},
+      c: {x: 50, y: 50},
       motion: {horizontal: 0, vertical: 0},
       direction: 'R' // or 'L' --> Direction player is facing
     };
@@ -38,9 +38,11 @@ class Player {
   }
 
   /*****************************************************
-  * MOVE
+  * Move
   *****************************************************/
   move({CTRLS, ACTIONS, COLLISION, POS, CONST}) {
+    if (!COLLISION.hit('x')) POS.c.x += POS.motion.horizontal;
+    if (!COLLISION.hit('y')) POS.c.y += POS.motion.vertical;
 
     if (CTRLS.isActive('a') || CTRLS.isActive('d')) {
       ACTIONS.setToActive('run');
@@ -59,22 +61,27 @@ class Player {
       POS.motion.horizontal = 0;
     }
 
-    // POS.motion.vertical = (!this.collision('x')) ? CONST._.jump.velocity.fall : 0;
+    if (CTRLS.isActive('space') && !ACTIONS.jump.active && COLLISION.isFloor()) {
+      POS.motion.vertical = 0;
+      ACTIONS.setToActive('jump');
+      POS.motion.vertical -= CONST._.jump.altitude;
+    }
 
-    if (!COLLISION.x) POS.c.x += POS.motion.horizontal;
-    if (!COLLISION.y) POS.c.y += POS.motion.vertical;
+    if (!COLLISION.isFloor()) {
+      POS.motion.vertical += CONST._.jump.velocity.fall;
+    }
 
   }
 
   /*****************************************************
-  * collision
+  * Collision
   *****************************************************/
   collision({COLLISION, POS, HITBOX}) {
     COLLISION.listen({POS: this.POS, HITBOX: this.CONST._});
   }
 
   /*****************************************************
-  * ANIMATE
+  * Animations
   *****************************************************/
   animate({ACTIONS, ANIMATIONS}) {
     if (ACTIONS.idle.active) ANIMATIONS.play({action: 'idle'});
@@ -84,7 +91,7 @@ class Player {
   }
 
   /*****************************************************
-  * RENDER
+  * Render
   *****************************************************/
   render() {
     this.collision({
@@ -107,7 +114,7 @@ class Player {
     });
 
     let currentFrame = this.ANIMATIONS.FRAME;
-  	this.test({logCollision: true});
+  	this.test({logCollision: false});
 
     Game.RENDER.ctx.globalAlpha = 0.2;
     Game.RENDER.ctx.fillRect(this.POS.c.x, this.POS.c.y, this.CONST._.size.width, this.CONST._.size.height);
@@ -125,7 +132,7 @@ class Player {
 
     // Log CollisionDetection
     if (logCollision) {
-      console.log(this.COLLISION.x, this.COLLISION.y);
+      console.log(this.COLLISION.y);
     }
 
     // Test if controls are registering

@@ -14,10 +14,10 @@ class Config {
 
     this.TILES = {
       _1: [
-        new Tile({x: 600, y: 100, width: 30, height: 600, type: 'block', collision: true}),
+        new Tile({x: 800, y: 100, width: 30, height: 600, type: 'block', collision: true}),
         new Tile({x: 0, y: 555, width: 1200, height: 30, type: 'block', collision: true}),
-        new Tile({x: 0, y: 0, width: 10, height: 600, type: 'block', collision: true}),
-        new Tile({x: 200, y: 100, width: 30, height: 30, type: 'block', collision: true})
+        new Tile({x: 600, y: 400, width: 200, height: 50, type: 'block', collision: true}),
+        new Tile({x: 0, y: 0, width: 30, height: 30, type: 'block', collision: true})
       ]
     };
   }
@@ -50,7 +50,6 @@ const Render = () => {
 
 const Init = () => {
   Game.PLAYER._1.COLLISION.init(Game.TILES._1);
-  Game.PLAYER._1.init();
   window.requestAnimationFrame(Render);
 };
 
