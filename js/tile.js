@@ -5,7 +5,8 @@ class Tile {
       move: 0
     };
     this.POS = {
-      c: {x: x, y: y}
+      x: x,
+      y: y
     };
     this.SIZE = {
       width: width,
@@ -14,6 +15,6 @@ class Tile {
   }
 
   render() {
-    Game.RENDER.ctx.fillRect(this.POS.c.x, this.POS.c.y, this.SIZE.width, this.SIZE.height);
+    Game.RENDER.ctx.fillRect(this.POS.x, this.POS.y, this.SIZE.width, this.SIZE.height);
   }
 }

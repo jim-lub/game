@@ -26,7 +26,7 @@ class Player {
     };
 
     this.POS = {
-      c: {x: 50, y: 50},
+      c: {x: 50, y: 250},
       motion: {horizontal: 0, vertical: 0},
       direction: 'R' // or 'L' --> Direction player is facing
     };
@@ -76,8 +76,14 @@ class Player {
   /*****************************************************
   * Collision
   *****************************************************/
-  collision({COLLISION, POS, HITBOX}) {
-    COLLISION.listen({POS: this.POS, HITBOX: this.CONST._});
+  collision({COLLISION, POS, ACTIONS}) {
+    let action = 'idle';
+    if (ACTIONS.idle.active) action = 'idle';
+    if (ACTIONS.run.active) action = 'run';
+    if (ACTIONS.jump.active) action = 'jump';
+    if (ACTIONS.slide.active) action = 'slide';
+
+    COLLISION.listen({POS}, action);
   }
 
   /*****************************************************
@@ -97,7 +103,7 @@ class Player {
     this.collision({
       COLLISION: this.COLLISION,
       POS: this.POS,
-      HITBOX: this.CONST._
+      ACTIONS: this.ACTIONS
     });
 
     this.move({
@@ -132,7 +138,8 @@ class Player {
 
     // Log CollisionDetection
     if (logCollision) {
-      console.log(this.COLLISION.y);
+      console.log(this.COLLISION.x, this.COLLISION.y);
+      if (this.CTRLS.MOUSE.middleClick.active) console.log(this.COLLISION.HITBOX.idle.collisionPoints);
     }
 
     // Test if controls are registering
